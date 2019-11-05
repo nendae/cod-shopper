@@ -2,15 +2,16 @@ import React from 'react'
 import * as actions from '../store/product'
 import {connect} from 'react-redux'
 
-class LandingPage extends React.Component {
+class AllProducts extends React.Component {
   async componentDidMount() {
     const {fetchProducts} = this.props
     await fetchProducts()
   }
   render() {
     const {products} = this.props
+    console.log('render hit')
     return (
-      <div className="landing-page-body">
+      <div className="all-products-body">
         <h1>All the products!</h1>
         <ul>
           {products.productList.map(product => (
@@ -30,4 +31,4 @@ const mapDispatchToProps = dispatch => ({
   fetchProducts: () => dispatch(actions.fetchProducts())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(LandingPage)
+export default connect(mapStateToProps, mapDispatchToProps)(AllProducts)

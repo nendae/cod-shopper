@@ -22,8 +22,9 @@ const fetchProductsAction = products => ({type: FETCH_PRODUCTS, products})
  */
 export const fetchProducts = () => async dispatch => {
   try {
-    const res = await axios.get('/api/products')
-    dispatch(fetchProductsAction(res.data))
+    const response = await axios.get('/api/products')
+    console.log('response is:', response)
+    dispatch(fetchProductsAction(response.data))
   } catch (err) {
     console.error(err)
   }

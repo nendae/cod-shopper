@@ -9,6 +9,8 @@ import App from './app'
 // establishes socket connection
 import './socket'
 
+window.store = store
+
 ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
