@@ -1,12 +1,19 @@
 const crypto = require('crypto')
 const Sequelize = require('sequelize')
 const db = require('../db')
+const {UserRole} = require('./user_role')
 
 const User = db.define('user', {
   email: {
     type: Sequelize.STRING,
     unique: true,
     allowNull: false
+  },
+  firstName: {
+    type: Sequelize.STRING
+  },
+  lastName: {
+    type: Sequelize.STRING
   },
   password: {
     type: Sequelize.STRING,
@@ -28,6 +35,8 @@ const User = db.define('user', {
     type: Sequelize.STRING
   }
 })
+
+// User.belongsTo(UserRole)
 
 module.exports = User
 
