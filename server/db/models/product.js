@@ -11,13 +11,19 @@ const Product = db.define('product', {
     type: Sequelize.STRING
   },
   price: {
-    type: Sequelize.DECIMAL(20, 2)
+    type: Sequelize.DECIMAL(20, 2),
+    validate: {
+      min: 0
+    }
   },
   description: {
     type: Sequelize.TEXT
   },
   inventory: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
+    validate: {
+      min: 0
+    }
   },
   isFeatured: {
     type: Sequelize.BOOLEAN
