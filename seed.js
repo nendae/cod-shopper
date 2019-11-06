@@ -401,8 +401,8 @@ const products = [
   },
   {
     name: 'Cod - Black, Fresh, Wild, USA, Head Off, Cleaned (5lb avg)',
-    imageURL:
-      'https://shop.fultonfishmarket.com/media/catalog/product/cache/2/image/500x375/17f82f742ffe127f42dca9de82fb58b1/2/6/262m_1.jpg',
+    imageUrl:
+      'https://shop.fultonfishmarket.com/media/catalog/product/cache/2/image/500x375/9df78eab33525d08d6e5fb8d27136e95/b/l/black-cod-wild-head-off-cleaned.jpg',
     price: 100.0,
     description:
       'Considered a delicacy in many countries, the silky-white flesh of the Black Cod is soft-textured and mildly flavored. When cooked, its flaky texture is similar to Chilean Sea Bass. The delectable meat of Black Cod has a high fat content, so it can be prepared in a variety of ways, including baking, grilling, smoking, broiling and frying. Although fatty, the flavor is mellow and rich, so we suggest a minimal amount of spices, herbs or sauces. Black Cod is high in long-chain Omega 3 fatty acids, just about as much as wild salmon. It’s also a good source of Vitamin A and Iron.',
