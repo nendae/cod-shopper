@@ -2,9 +2,9 @@ const db = require('./server/db/index')
 // const {green, red} = require('chalk')
 // import datetime
 
-const User = require('./server/db/models/user')
-const Product = require('./server/db/models/product')
-
+const {User} = require('./server/db/models/models_index')
+const {Product} = require('./server/db/models/models_index')
+const {Order} = require('./server/db/models/models_index')
 // OrderItems
 //   -
 //   orderId int FK > - Order.orderId
@@ -171,21 +171,18 @@ const users = [
 // shipmentint FK > - Shipment.shipmentId
 // paymentInfo int FK > - PaymentInfo.paymentInfoId
 
+const orders = [
+  {
+    userId: 1,
+    orderSubmittedDate: Date.now() - 15
+  },
+  {
+    userId: 2,
+    orderSubmittedDate: null
+  }
+]
+
 // const order = [{
-//   userId: 1,
-//   orderStatusId: 1,
-//   orderDate: Date.now() - 15,
-//   totalPrice: 550.00,
-//   shipment: 1,
-//   paymentInfo: 1,
-// }, {
-//   userId: 2,
-//   orderStatusId: 2,
-//   orderDate: Date.now() - 14,
-//   totalPrice: 550.00,
-//   shipment: 2,
-//   paymentInfo: 1,
-// }, {
 //   userId: 3,
 //   orderStatusId: 3,
 //   orderDate: Date.now() - 13,
@@ -425,10 +422,15 @@ const products = [
 const seed = async () => {
   try {
     await db.sync({force: true})
-
     await Promise.all(
       users.map(user => {
         return User.create(user)
+      })
+    )
+
+    await Promise.all(
+      orders.map(order => {
+        return Order.create(order)
       })
     )
 

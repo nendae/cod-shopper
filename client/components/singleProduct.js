@@ -19,14 +19,14 @@ class SingleProduct extends Component {
       [event.target.name]: event.target.value
     })
   }
-  // Code to add functionality for adding items to cart
-  // handleSubmit(event) {
-  //   event.preventDefault();
-  //   this.props.addProductToCart(this.state);
-  //   this.setState({
-  //     quantity: '',
-  //   });
-  // }
+
+  handleSubmit(event) {
+    event.preventDefault()
+    this.props.addProductToCart(this.props.products.productList[0])
+    this.setState({
+      quantity: ''
+    })
+  }
 
   async componentDidMount() {
     await this.props.fetchProduct(this.props.match.params.id)
