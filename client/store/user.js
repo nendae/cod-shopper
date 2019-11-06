@@ -6,6 +6,7 @@ import history from '../history'
  */
 const GET_USER = 'GET_USER'
 const REMOVE_USER = 'REMOVE_USER'
+const ADDED_USER = 'ADDED_USER' //ONK - Action type for creating a new user
 
 /**
  * INITIAL STATE
@@ -17,6 +18,7 @@ const defaultUser = {}
  */
 const getUser = user => ({type: GET_USER, user})
 const removeUser = () => ({type: REMOVE_USER})
+const addedUser = user => ({type: ADDED_USER, user})
 
 /**
  * THUNK CREATORS
@@ -56,6 +58,18 @@ export const logout = () => async dispatch => {
   }
 }
 
+//ONK - Thunk to add users from the create-account component.
+export const addUser = user => {
+  return async dispatch => {
+    try {
+      const {data} = await axios.post('/api/users/add', user)
+      dispatch(addedUser(data))
+    } catch (err) {
+      console.log(err)
+    }
+  }
+}
+
 /**
  * REDUCER
  */
@@ -65,6 +79,8 @@ export default function(state = defaultUser, action) {
       return action.user
     case REMOVE_USER:
       return defaultUser
+    case ADDED_USER:
+      return {...state, ...action.user}
     default:
       return state
   }
