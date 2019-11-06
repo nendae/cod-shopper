@@ -15,3 +15,13 @@ router.get('/', async (req, res, next) => {
     next(err)
   }
 })
+
+//ONK - Route to add new users to the database from create-account form
+router.post('/add', async (req, res, next) => {
+  try {
+    const newUser = await User.create(req.body)
+    res.json(newUser)
+  } catch (err) {
+    next(err)
+  }
+})

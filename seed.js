@@ -1,5 +1,5 @@
 const db = require('./server/db/index')
-const {green, red} = require('chalk')
+// const {green, red} = require('chalk')
 // import datetime
 
 const User = require('./server/db/models/user')
@@ -437,10 +437,12 @@ const seed = async () => {
         return Product.create(product)
       })
     )
-    console.log(green('Seeding success!'))
+    // console.log(green('Seeding success!'))
+    console.log('Seeding success!')
     db.close()
   } catch (err) {
-    console.error(red('Oh noes! Something went wrong!'))
+    // console.error(red('Oh noes! Something went wrong!'))
+    console.error('Oh noes! Something went wrong!')
     console.error(err)
     db.close()
   }
