@@ -10,3 +10,22 @@ router.get('/', async (req, res, next) => {
     next(err)
   }
 })
+
+router.get('/:id', async (req, res, next) => {
+  try {
+    const singleProduct = await Product.findAll({
+      where: {
+        id: req.params.id
+      }
+    })
+    // console.log('Single product:', singleProduct)
+    if (singleProduct.length) {
+      res.status(200).json(singleProduct)
+    } else {
+      res.status(404).send('No product with that ID!')
+    }
+  } catch (error) {
+    console.error(error)
+    next(error)
+  }
+})
