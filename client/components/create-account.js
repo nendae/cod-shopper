@@ -28,6 +28,7 @@ class AddUser extends Component {
   handleSubmit(event) {
     event.preventDefault()
     this.props.addUser(this.state)
+    this.setState(defaultState)
   }
 
   render() {
@@ -48,16 +49,29 @@ class AddUser extends Component {
             onChange={event => this.setState({lastName: event.target.value})}
             onKeyDown={this.handleKey}
           />
-        </div>
-        <div>
           <label>Email</label>
           <input
-            type="text"
+            type="email"
             value={this.state.email}
             onChange={event => this.setState({email: event.target.value})}
             onKeyDown={this.handleKey}
           />
+          <label>Phone</label>
+          <input
+            type="tel"
+            value={this.state.phoneNumber}
+            onChange={event => this.setState({phoneNumber: event.target.value})}
+            onKeyDown={this.handleKey}
+          />
+          <label>Password</label>
+          <input
+            type="password"
+            value={this.state.password}
+            onChange={event => this.setState({password: event.target.value})}
+            onKeyDown={this.handleKey}
+          />
         </div>
+
         <button type="Submit">Add User</button>
       </form>
     )
