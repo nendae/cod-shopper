@@ -4,12 +4,10 @@ const {User} = require('./models_index')
 
 const Order = db.define('order', {
   orderSubmittedDate: {
-    type: Sequelize.DATE,
-    allowNull: null
+    type: Sequelize.DATE
   }
 })
 
 //Creates FK to user table.
-// Order.belongsTo(User);
 
 module.exports = Order
