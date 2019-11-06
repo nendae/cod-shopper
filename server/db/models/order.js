@@ -3,7 +3,7 @@ const db = require('../db')
 const {User} = require('./models_index')
 
 const Order = db.define('order', {
-  orderDate: {
+  orderSubmittedDate: {
     type: Sequelize.DATE,
     allowNull: false
   },
