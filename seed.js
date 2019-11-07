@@ -174,11 +174,13 @@ const users = [
 const orders = [
   {
     userId: 1,
-    orderSubmittedDate: Date.now() - 15
+    orderSubmittedDate: Date.now() - 15,
+    totalPrice: 10000
   },
   {
     userId: 2,
-    orderSubmittedDate: null
+    orderSubmittedDate: null,
+    totalPrice: 20000
   }
 ]
 

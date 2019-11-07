@@ -35,18 +35,36 @@ router.post('/', async (req, res, next) => {
 //Updating order with new total price
 router.post('/add', async (req, res, next) => {
   try {
-    const newOrderToItem = await OrderToItem.create(req.body)
-    if (newOrderToItem) {
-      const newProduct = await Product.findByPk(newOrderToItem.productId)
-      const updatedOrder = await Order.increment('totalPrice', {
-        by: newProduct.price * newOrderToItem.quantity,
+    const existingOrderToItem = await OrderToItem.findOne({
+      where: {
+        productId: req.body.productId,
+        orderId: req.body.orderId
+      }
+    })
+    let OrderToItemInstance = null
+    if (existingOrderToItem) {
+      OrderToItemInstance = await OrderToItem.increment('quantity', {
+        by: req.body.quantity,
         where: {
-          id: newOrderToItem.orderId
+          orderId: req.body.orderId,
+          productId: req.body.productId
         }
       })
-      console.log('new order to item', newOrderToItem)
-      console.log('updated order', updatedOrder)
-      res.json(newOrderToItem)
+    } else {
+      OrderToItemInstance = await OrderToItem.create(req.body)
+    }
+    console.log('OrderToItemInstance', OrderToItemInstance)
+    if (OrderToItemInstance) {
+      OrderToItemInstance = OrderToItemInstance[0][0][0]
+      const newProduct = await Product.findByPk(OrderToItemInstance.productId)
+      console.log('newProduct', newProduct)
+      const updatedOrder = await Order.increment('totalPrice', {
+        by: newProduct.price * OrderToItemInstance.quantity,
+        where: {
+          id: OrderToItemInstance.orderId
+        }
+      })
+      res.json(updatedOrder[0][0][0].totalPrice)
     } else {
       res.status(500).send('Adding product failed.')
     }

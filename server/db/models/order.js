@@ -8,6 +8,8 @@ const Order = db.define('order', {
   },
   totalPrice: {
     type: Sequelize.INTEGER,
+    default: 0,
+    allowNull: false,
     validate: {
       min: 0
     }
