@@ -37,7 +37,7 @@ router.post('/add', async (req, res, next) => {
   try {
     const newOrderToItem = await OrderToItem.create(req.body)
     if (newOrderToItem) {
-      const newProduct = await Product.findById(newOrderToItem.productId)
+      const newProduct = await Product.findByPk(newOrderToItem.productId)
       const updatedOrder = await Order.increment('totalPrice', {
         by: newProduct.price * newOrderToItem.quantity,
         where: {
