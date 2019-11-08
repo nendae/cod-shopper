@@ -17,6 +17,25 @@ router.get('/', async (req, res, next) => {
   }
 })
 
+router.get('/:userId/getCart', async (req, res, next) => {
+  try {
+    const existingCart = await Order.findOne({
+      include: [{model: Product}],
+      where: {
+        userId: req.params.userId,
+        orderSubmittedDate: null
+      }
+    })
+    if (existingCart) {
+      res.json(existingCart)
+    } else {
+      res.status(404).send('No existing cart for this user.')
+    }
+  } catch (err) {
+    next(err)
+  }
+})
+
 //Create new order
 router.post('/', async (req, res, next) => {
   try {

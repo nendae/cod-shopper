@@ -244,6 +244,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
 /* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../store */ "./client/store/index.js");
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 
 
 
@@ -251,12 +255,68 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * COMPONENT
  */
+// return {
+//   handleSubmit: async (evt) => {
+//    evt.preventDefault()
+//    const formName = evt.target.name
+//    const email = evt.target.email.value
+//    const password = evt.target.password.value
+//    dispatch(auth(email, password, formName))
+//    await dispatch(getCart(this.props.userId))
+//    if(this.props.totalPrice === undefined){
+//      await dispatch(createCart(this.props.userId))
+//    }
 
 var AuthForm = function AuthForm(props) {
   var name = props.name,
       displayName = props.displayName,
-      handleSubmit = props.handleSubmit,
       error = props.error;
+
+  var handleSubmit =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(evt) {
+      var formName, email, password;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              evt.preventDefault();
+              formName = evt.target.name;
+              email = evt.target.email.value;
+              password = evt.target.password.value;
+              _context.next = 6;
+              return props.auth(email, password, formName);
+
+            case 6:
+              console.log('props>>>>>', props);
+              _context.next = 9;
+              return props.getCart(props.userId);
+
+            case 9:
+              if (!(props.totalPrice === undefined)) {
+                _context.next = 12;
+                break;
+              }
+
+              _context.next = 12;
+              return props.createCart(props.userId);
+
+            case 12:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function handleSubmit(_x) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
     onSubmit: handleSubmit,
     name: name
@@ -290,7 +350,8 @@ var mapLogin = function mapLogin(state) {
     name: 'login',
     displayName: 'Login',
     error: state.user.error,
-    userId: state.user.Id
+    userId: state.user.id,
+    totalPrice: state.order.totalPrice
   };
 };
 
@@ -299,19 +360,20 @@ var mapSignup = function mapSignup(state) {
     name: 'signup',
     displayName: 'Sign Up',
     error: state.user.error,
-    userId: state.user.Id
+    userId: state.user.id
   };
 };
 
 var mapDispatch = function mapDispatch(dispatch) {
   return {
-    handleSubmit: function handleSubmit(evt) {
-      evt.preventDefault();
-      var formName = evt.target.name;
-      var email = evt.target.email.value;
-      var password = evt.target.password.value;
-      dispatch(Object(_store__WEBPACK_IMPORTED_MODULE_3__["auth"])(email, password, formName));
-      dispatch(Object(_store__WEBPACK_IMPORTED_MODULE_3__["createCart"])(this.props.userId));
+    auth: function auth(email, password, formName) {
+      return dispatch(Object(_store__WEBPACK_IMPORTED_MODULE_3__["auth"])(email, password, formName));
+    },
+    getCart: function getCart(id) {
+      return dispatch(Object(_store__WEBPACK_IMPORTED_MODULE_3__["getCart"])(id));
+    },
+    createCart: function createCart(id) {
+      return dispatch(Object(_store__WEBPACK_IMPORTED_MODULE_3__["createCart"])(id));
     }
   };
 };
@@ -325,7 +387,7 @@ var Signup = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["connect"])(mapSign
 AuthForm.propTypes = {
   name: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.string.isRequired,
   displayName: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.string.isRequired,
-  handleSubmit: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func.isRequired,
+  //handleSubmit: PropTypes.func.isRequired,
   error: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.object
 };
 
@@ -668,12 +730,6 @@ function (_Component) {
     key: "handleSubmit",
     value: function handleSubmit(event) {
       event.preventDefault();
-
-      if (noCart) {
-        this.props.createCart(userId); //this.props.addtoCart(this.props.products.productList[0])
-      } else {//this.props.addtoCart(this.props.products.productList[0])
-        }
-
       this.setState({
         quantity: ''
       });
@@ -744,9 +800,6 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
     fetchProduct: function fetchProduct(id) {
       return dispatch(Object(_store_product__WEBPACK_IMPORTED_MODULE_2__["fetchProduct"])(id));
-    },
-    createCart: function createCart(product) {
-      return dispatch(Object(_store_product__WEBPACK_IMPORTED_MODULE_2__["createCart"])(product));
     }
   };
 };
@@ -1005,7 +1058,7 @@ socket.on('connect', function () {
 /*!*******************************!*\
   !*** ./client/store/index.js ***!
   \*******************************/
-/*! exports provided: default, me, auth, logout, addUser, fetchProducts, fetchProduct, createCart, addToCart */
+/*! exports provided: default, me, auth, logout, addUser, fetchProducts, fetchProduct, getCart, createCart, addToCart */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1030,6 +1083,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "fetchProducts", function() { return _product__WEBPACK_IMPORTED_MODULE_5__["fetchProducts"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "fetchProduct", function() { return _product__WEBPACK_IMPORTED_MODULE_5__["fetchProduct"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getCart", function() { return _order__WEBPACK_IMPORTED_MODULE_6__["getCart"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "createCart", function() { return _order__WEBPACK_IMPORTED_MODULE_6__["createCart"]; });
 
@@ -1062,11 +1117,12 @@ var store = Object(redux__WEBPACK_IMPORTED_MODULE_0__["createStore"])(reducer, m
 /*!*******************************!*\
   !*** ./client/store/order.js ***!
   \*******************************/
-/*! exports provided: createCart, addToCart, default */
+/*! exports provided: getCart, createCart, addToCart, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCart", function() { return getCart; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createCart", function() { return createCart; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addToCart", function() { return addToCart; });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
@@ -1088,6 +1144,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var CREATE_CART = 'CREATE_CART';
 var ADD_TO_CART = 'ADD_TO_CART';
+var GET_CART = 'GET_CART';
 /**
  * INITIAL STATE
  */
@@ -1097,10 +1154,10 @@ var defaultOrder = {};
  * ACTION CREATORS
  */
 
-var createCartAction = function createCartAction(orderPrice) {
+var createCartAction = function createCartAction(totalPrice) {
   return {
     type: CREATE_CART,
-    orderPrice: orderPrice
+    totalPrice: totalPrice
   };
 };
 
@@ -1110,48 +1167,51 @@ var addToCartAction = function addToCartAction(order) {
     order: order
   };
 };
+
+var getCartAction = function getCartAction(orderProducts) {
+  return {
+    type: GET_CART,
+    orderProducts: orderProducts
+  };
+};
 /**
  * THUNK CREATORS
  */
 
 
-var createCart = function createCart(userId) {
+var getCart = function getCart(userId) {
   return (
     /*#__PURE__*/
     function () {
       var _ref = _asyncToGenerator(
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee(dispatch) {
-        var _ref2, data;
-
+        var response;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.prev = 0;
                 _context.next = 3;
-                return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/api/orders/', {
-                  userId: userId
-                });
+                return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/orders/".concat(userId, "/getCart"));
 
               case 3:
-                _ref2 = _context.sent;
-                data = _ref2.data;
-                dispatch(createCartAction(data));
-                _context.next = 11;
+                response = _context.sent;
+                dispatch(getCartAction(response.data));
+                _context.next = 10;
                 break;
 
-              case 8:
-                _context.prev = 8;
+              case 7:
+                _context.prev = 7;
                 _context.t0 = _context["catch"](0);
                 console.error(_context.t0);
 
-              case 11:
+              case 10:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[0, 8]]);
+        }, _callee, null, [[0, 7]]);
       }));
 
       return function (_x) {
@@ -1160,11 +1220,11 @@ var createCart = function createCart(userId) {
     }()
   );
 };
-var addToCart = function addToCart() {
+var createCart = function createCart(userId) {
   return (
     /*#__PURE__*/
     function () {
-      var _ref3 = _asyncToGenerator(
+      var _ref2 = _asyncToGenerator(
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee2(dispatch) {
         var response;
@@ -1174,11 +1234,13 @@ var addToCart = function addToCart() {
               case 0:
                 _context2.prev = 0;
                 _context2.next = 3;
-                return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/api/orderstoitems/');
+                return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/api/orders/", {
+                  userId: userId
+                });
 
               case 3:
                 response = _context2.sent;
-                dispatch(addToCartAction(response.data));
+                dispatch(createCartAction(response.data));
                 _context2.next = 10;
                 break;
 
@@ -1196,6 +1258,47 @@ var addToCart = function addToCart() {
       }));
 
       return function (_x2) {
+        return _ref2.apply(this, arguments);
+      };
+    }()
+  );
+};
+var addToCart = function addToCart() {
+  return (
+    /*#__PURE__*/
+    function () {
+      var _ref3 = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee3(dispatch) {
+        var response;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.prev = 0;
+                _context3.next = 3;
+                return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/api/orderstoitems/');
+
+              case 3:
+                response = _context3.sent;
+                dispatch(addToCartAction(response.data));
+                _context3.next = 10;
+                break;
+
+              case 7:
+                _context3.prev = 7;
+                _context3.t0 = _context3["catch"](0);
+                console.error(_context3.t0);
+
+              case 10:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, null, [[0, 7]]);
+      }));
+
+      return function (_x3) {
         return _ref3.apply(this, arguments);
       };
     }()
@@ -1212,10 +1315,13 @@ var addToCart = function addToCart() {
 
   switch (action.type) {
     case CREATE_CART:
-      return _objectSpread({}, state, {}, action.orderPrice);
+      return _objectSpread({}, state, {}, action.totalPrice);
 
     case ADD_TO_CART:
       return _objectSpread({}, state, {}, action.product);
+
+    case GET_CART:
+      return _objectSpread({}, state, {}, action.orderProducts);
 
     default:
       return state;
