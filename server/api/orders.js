@@ -35,6 +35,7 @@ router.post('/', async (req, res, next) => {
 //Updating order with new total price
 router.post('/add', async (req, res, next) => {
   try {
+    //gets any existing OrderItems that have the same product for this orderId
     const existingOrderToItem = await OrderToItem.findOne({
       where: {
         productId: req.body.productId,
@@ -42,7 +43,10 @@ router.post('/add', async (req, res, next) => {
       }
     })
     let OrderToItemInstance = null
+
+    //Checks to see if the product is currently on this order
     if (existingOrderToItem) {
+      //Add the new quantity to the current quatity when the product is already on the order
       OrderToItemInstance = await OrderToItem.increment('quantity', {
         by: req.body.quantity,
         where: {
@@ -51,9 +55,11 @@ router.post('/add', async (req, res, next) => {
         }
       })
     } else {
+      //Adds the product to the order with the quantity passed in
       OrderToItemInstance = await OrderToItem.create(req.body)
     }
-    console.log('OrderToItemInstance', OrderToItemInstance)
+
+    //Checks to see that the OrderItem was
     if (OrderToItemInstance) {
       OrderToItemInstance = OrderToItemInstance[0][0][0]
       const newProduct = await Product.findByPk(OrderToItemInstance.productId)

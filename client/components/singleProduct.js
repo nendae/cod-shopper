@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {fetchProduct, addProductToCart} from '../store/product'
+import {fetchProduct, createCart} from '../store/product'
 import {Link} from 'react-router-dom'
 
 class SingleProduct extends Component {
@@ -22,7 +22,13 @@ class SingleProduct extends Component {
 
   handleSubmit(event) {
     event.preventDefault()
-    this.props.addProductToCart(this.props.products.productList[0])
+    if (noCart) {
+      this.props.createCart(userId)
+      //this.props.addtoCart(this.props.products.productList[0])
+    } else {
+      //this.props.addtoCart(this.props.products.productList[0])
+    }
+
     this.setState({
       quantity: ''
     })
@@ -68,8 +74,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  fetchProduct: id => dispatch(fetchProduct(id))
-  // addProductToCart: (product) => dispatch(addProductToCart(product)),
+  fetchProduct: id => dispatch(fetchProduct(id)),
+  createCart: product => dispatch(createCart(product))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleProduct)
