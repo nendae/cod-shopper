@@ -1,14 +1,39 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
-import {auth} from '../store'
+import {auth, createCart, getCart} from '../store'
 
 /**
  * COMPONENT
  */
-const AuthForm = props => {
-  const {name, displayName, handleSubmit, error} = props
 
+// return {
+//   handleSubmit: async (evt) => {
+//    evt.preventDefault()
+//    const formName = evt.target.name
+//    const email = evt.target.email.value
+//    const password = evt.target.password.value
+//    dispatch(auth(email, password, formName))
+//    await dispatch(getCart(this.props.userId))
+//    if(this.props.totalPrice === undefined){
+//      await dispatch(createCart(this.props.userId))
+//    }
+
+const AuthForm = props => {
+  const {name, displayName, error} = props
+
+  const handleSubmit = async function(evt) {
+    evt.preventDefault()
+    const formName = evt.target.name
+    const email = evt.target.email.value
+    const password = evt.target.password.value
+    await props.auth(email, password, formName)
+    console.log('props>>>>>', props)
+    await props.getCart(props.userId)
+    if (props.totalPrice === undefined) {
+      await props.createCart(props.userId)
+    }
+  }
   return (
     <div>
       <form onSubmit={handleSubmit} name={name}>
@@ -45,7 +70,9 @@ const mapLogin = state => {
   return {
     name: 'login',
     displayName: 'Login',
-    error: state.user.error
+    error: state.user.error,
+    userId: state.user.id,
+    totalPrice: state.order.totalPrice
   }
 }
 
@@ -53,21 +80,17 @@ const mapSignup = state => {
   return {
     name: 'signup',
     displayName: 'Sign Up',
-    error: state.user.error
+    error: state.user.error,
+    userId: state.user.id
   }
 }
 
-const mapDispatch = dispatch => {
-  return {
-    handleSubmit(evt) {
-      evt.preventDefault()
-      const formName = evt.target.name
-      const email = evt.target.email.value
-      const password = evt.target.password.value
-      dispatch(auth(email, password, formName))
-    }
-  }
-}
+const mapDispatch = dispatch => ({
+  auth: (email, password, formName) =>
+    dispatch(auth(email, password, formName)),
+  getCart: id => dispatch(getCart(id)),
+  createCart: id => dispatch(createCart(id))
+})
 
 export const Login = connect(mapLogin, mapDispatch)(AuthForm)
 export const Signup = connect(mapSignup, mapDispatch)(AuthForm)
@@ -78,6 +101,6 @@ export const Signup = connect(mapSignup, mapDispatch)(AuthForm)
 AuthForm.propTypes = {
   name: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
+  //handleSubmit: PropTypes.func.isRequired,
   error: PropTypes.object
 }

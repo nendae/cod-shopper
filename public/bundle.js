@@ -244,6 +244,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
 /* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../store */ "./client/store/index.js");
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 
 
 
@@ -251,12 +255,68 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * COMPONENT
  */
+// return {
+//   handleSubmit: async (evt) => {
+//    evt.preventDefault()
+//    const formName = evt.target.name
+//    const email = evt.target.email.value
+//    const password = evt.target.password.value
+//    dispatch(auth(email, password, formName))
+//    await dispatch(getCart(this.props.userId))
+//    if(this.props.totalPrice === undefined){
+//      await dispatch(createCart(this.props.userId))
+//    }
 
 var AuthForm = function AuthForm(props) {
   var name = props.name,
       displayName = props.displayName,
-      handleSubmit = props.handleSubmit,
       error = props.error;
+
+  var handleSubmit =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(evt) {
+      var formName, email, password;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              evt.preventDefault();
+              formName = evt.target.name;
+              email = evt.target.email.value;
+              password = evt.target.password.value;
+              _context.next = 6;
+              return props.auth(email, password, formName);
+
+            case 6:
+              console.log('props>>>>>', props);
+              _context.next = 9;
+              return props.getCart(props.userId);
+
+            case 9:
+              if (!(props.totalPrice === undefined)) {
+                _context.next = 12;
+                break;
+              }
+
+              _context.next = 12;
+              return props.createCart(props.userId);
+
+            case 12:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function handleSubmit(_x) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
     onSubmit: handleSubmit,
     name: name
@@ -289,7 +349,9 @@ var mapLogin = function mapLogin(state) {
   return {
     name: 'login',
     displayName: 'Login',
-    error: state.user.error
+    error: state.user.error,
+    userId: state.user.id,
+    totalPrice: state.order.totalPrice
   };
 };
 
@@ -297,18 +359,21 @@ var mapSignup = function mapSignup(state) {
   return {
     name: 'signup',
     displayName: 'Sign Up',
-    error: state.user.error
+    error: state.user.error,
+    userId: state.user.id
   };
 };
 
 var mapDispatch = function mapDispatch(dispatch) {
   return {
-    handleSubmit: function handleSubmit(evt) {
-      evt.preventDefault();
-      var formName = evt.target.name;
-      var email = evt.target.email.value;
-      var password = evt.target.password.value;
-      dispatch(Object(_store__WEBPACK_IMPORTED_MODULE_3__["auth"])(email, password, formName));
+    auth: function auth(email, password, formName) {
+      return dispatch(Object(_store__WEBPACK_IMPORTED_MODULE_3__["auth"])(email, password, formName));
+    },
+    getCart: function getCart(id) {
+      return dispatch(Object(_store__WEBPACK_IMPORTED_MODULE_3__["getCart"])(id));
+    },
+    createCart: function createCart(id) {
+      return dispatch(Object(_store__WEBPACK_IMPORTED_MODULE_3__["createCart"])(id));
     }
   };
 };
@@ -322,7 +387,7 @@ var Signup = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["connect"])(mapSign
 AuthForm.propTypes = {
   name: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.string.isRequired,
   displayName: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.string.isRequired,
-  handleSubmit: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func.isRequired,
+  //handleSubmit: PropTypes.func.isRequired,
   error: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.object
 };
 
@@ -665,7 +730,6 @@ function (_Component) {
     key: "handleSubmit",
     value: function handleSubmit(event) {
       event.preventDefault();
-      this.props.addProductToCart(this.props.products.productList[0]);
       this.setState({
         quantity: ''
       });
@@ -736,8 +800,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
     fetchProduct: function fetchProduct(id) {
       return dispatch(Object(_store_product__WEBPACK_IMPORTED_MODULE_2__["fetchProduct"])(id));
-    } // addProductToCart: (product) => dispatch(addProductToCart(product)),
-
+    }
   };
 };
 
@@ -995,7 +1058,7 @@ socket.on('connect', function () {
 /*!*******************************!*\
   !*** ./client/store/index.js ***!
   \*******************************/
-/*! exports provided: default, me, auth, logout, addUser, fetchProducts, createCart, addToCart, fetchProduct */
+/*! exports provided: default, me, auth, logout, addUser, fetchProducts, fetchProduct, getCart, createCart, addToCart */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1008,6 +1071,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var redux_devtools_extension__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./user */ "./client/store/user.js");
 /* harmony import */ var _product__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./product */ "./client/store/product.js");
+/* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./order */ "./client/store/order.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "me", function() { return _user__WEBPACK_IMPORTED_MODULE_4__["me"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "auth", function() { return _user__WEBPACK_IMPORTED_MODULE_4__["auth"]; });
@@ -1018,11 +1082,14 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "fetchProducts", function() { return _product__WEBPACK_IMPORTED_MODULE_5__["fetchProducts"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "createCart", function() { return _product__WEBPACK_IMPORTED_MODULE_5__["createCart"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "addToCart", function() { return _product__WEBPACK_IMPORTED_MODULE_5__["addToCart"]; });
-
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "fetchProduct", function() { return _product__WEBPACK_IMPORTED_MODULE_5__["fetchProduct"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getCart", function() { return _order__WEBPACK_IMPORTED_MODULE_6__["getCart"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "createCart", function() { return _order__WEBPACK_IMPORTED_MODULE_6__["createCart"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "addToCart", function() { return _order__WEBPACK_IMPORTED_MODULE_6__["addToCart"]; });
+
 
 
 
@@ -1032,7 +1099,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var reducer = Object(redux__WEBPACK_IMPORTED_MODULE_0__["combineReducers"])({
   user: _user__WEBPACK_IMPORTED_MODULE_4__["default"],
-  products: _product__WEBPACK_IMPORTED_MODULE_5__["default"]
+  products: _product__WEBPACK_IMPORTED_MODULE_5__["default"],
+  order: _order__WEBPACK_IMPORTED_MODULE_6__["default"]
 });
 var middleware = Object(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_3__["composeWithDevTools"])(Object(redux__WEBPACK_IMPORTED_MODULE_0__["applyMiddleware"])(redux_thunk__WEBPACK_IMPORTED_MODULE_2__["default"], Object(redux_logger__WEBPACK_IMPORTED_MODULE_1__["createLogger"])({
   collapsed: true
@@ -1042,20 +1110,236 @@ var store = Object(redux__WEBPACK_IMPORTED_MODULE_0__["createStore"])(reducer, m
 
 
 
+
+/***/ }),
+
+/***/ "./client/store/order.js":
+/*!*******************************!*\
+  !*** ./client/store/order.js ***!
+  \*******************************/
+/*! exports provided: getCart, createCart, addToCart, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCart", function() { return getCart; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createCart", function() { return createCart; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addToCart", function() { return addToCart; });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+/*
+ * ACTION TYPES
+ */
+
+var CREATE_CART = 'CREATE_CART';
+var ADD_TO_CART = 'ADD_TO_CART';
+var GET_CART = 'GET_CART';
+/**
+ * INITIAL STATE
+ */
+
+var defaultOrder = {};
+/**
+ * ACTION CREATORS
+ */
+
+var createCartAction = function createCartAction(totalPrice) {
+  return {
+    type: CREATE_CART,
+    totalPrice: totalPrice
+  };
+};
+
+var addToCartAction = function addToCartAction(order) {
+  return {
+    type: ADD_TO_CART,
+    order: order
+  };
+};
+
+var getCartAction = function getCartAction(orderProducts) {
+  return {
+    type: GET_CART,
+    orderProducts: orderProducts
+  };
+};
+/**
+ * THUNK CREATORS
+ */
+
+
+var getCart = function getCart(userId) {
+  return (
+    /*#__PURE__*/
+    function () {
+      var _ref = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee(dispatch) {
+        var response;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.prev = 0;
+                _context.next = 3;
+                return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/orders/".concat(userId, "/getCart"));
+
+              case 3:
+                response = _context.sent;
+                dispatch(getCartAction(response.data));
+                _context.next = 10;
+                break;
+
+              case 7:
+                _context.prev = 7;
+                _context.t0 = _context["catch"](0);
+                console.error(_context.t0);
+
+              case 10:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, null, [[0, 7]]);
+      }));
+
+      return function (_x) {
+        return _ref.apply(this, arguments);
+      };
+    }()
+  );
+};
+var createCart = function createCart(userId) {
+  return (
+    /*#__PURE__*/
+    function () {
+      var _ref2 = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee2(dispatch) {
+        var response;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.prev = 0;
+                _context2.next = 3;
+                return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/api/orders/", {
+                  userId: userId
+                });
+
+              case 3:
+                response = _context2.sent;
+                dispatch(createCartAction(response.data));
+                _context2.next = 10;
+                break;
+
+              case 7:
+                _context2.prev = 7;
+                _context2.t0 = _context2["catch"](0);
+                console.error(_context2.t0);
+
+              case 10:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, null, [[0, 7]]);
+      }));
+
+      return function (_x2) {
+        return _ref2.apply(this, arguments);
+      };
+    }()
+  );
+};
+var addToCart = function addToCart() {
+  return (
+    /*#__PURE__*/
+    function () {
+      var _ref3 = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee3(dispatch) {
+        var response;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.prev = 0;
+                _context3.next = 3;
+                return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/api/orderstoitems/');
+
+              case 3:
+                response = _context3.sent;
+                dispatch(addToCartAction(response.data));
+                _context3.next = 10;
+                break;
+
+              case 7:
+                _context3.prev = 7;
+                _context3.t0 = _context3["catch"](0);
+                console.error(_context3.t0);
+
+              case 10:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, null, [[0, 7]]);
+      }));
+
+      return function (_x3) {
+        return _ref3.apply(this, arguments);
+      };
+    }()
+  );
+};
+/**
+ * REDUCER
+ */
+
+/* harmony default export */ __webpack_exports__["default"] = (function () {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultOrder;
+  var action = arguments.length > 1 ? arguments[1] : undefined;
+  Object.freeze(state);
+
+  switch (action.type) {
+    case CREATE_CART:
+      return _objectSpread({}, state, {}, action.totalPrice);
+
+    case ADD_TO_CART:
+      return _objectSpread({}, state, {}, action.product);
+
+    case GET_CART:
+      return _objectSpread({}, state, {}, action.orderProducts);
+
+    default:
+      return state;
+  }
+});
+
 /***/ }),
 
 /***/ "./client/store/product.js":
 /*!*********************************!*\
   !*** ./client/store/product.js ***!
   \*********************************/
-/*! exports provided: fetchProducts, createCart, addToCart, fetchProduct, default */
+/*! exports provided: fetchProducts, fetchProduct, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchProducts", function() { return fetchProducts; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createCart", function() { return createCart; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addToCart", function() { return addToCart; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchProduct", function() { return fetchProduct; });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
@@ -1076,8 +1360,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var FETCH_PRODUCTS = 'FETCH_PRODUCTS';
 var FETCH_PRODUCT = 'FETCH_PRODUCT';
-var CREATE_CART = 'CREATE_CART';
-var ADD_TO_CART = 'ADD_TO_CART';
 /**
  * INITIAL STATE
  */
@@ -1101,19 +1383,6 @@ var fetchProductsAction = function fetchProductsAction(products) {
 var fetchProductAction = function fetchProductAction(product) {
   return {
     type: FETCH_PRODUCT,
-    product: product
-  };
-};
-
-var createCartAction = function createCartAction(product) {
-  return {
-    type: CREATE_CART
-  };
-};
-
-var addToCartAction = function addToCartAction(product) {
-  return {
-    type: ADD_TO_CART,
     product: product
   };
 };
@@ -1163,7 +1432,7 @@ var fetchProducts = function fetchProducts() {
     }()
   );
 };
-var createCart = function createCart(userId) {
+var fetchProduct = function fetchProduct(id) {
   return (
     /*#__PURE__*/
     function () {
@@ -1177,11 +1446,11 @@ var createCart = function createCart(userId) {
               case 0:
                 _context2.prev = 0;
                 _context2.next = 3;
-                return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/api/orders/');
+                return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/products/".concat(id));
 
               case 3:
                 response = _context2.sent;
-                dispatch(createCartAction());
+                dispatch(fetchProductAction(response.data));
                 _context2.next = 10;
                 break;
 
@@ -1200,88 +1469,6 @@ var createCart = function createCart(userId) {
 
       return function (_x2) {
         return _ref2.apply(this, arguments);
-      };
-    }()
-  );
-};
-var addToCart = function addToCart() {
-  return (
-    /*#__PURE__*/
-    function () {
-      var _ref3 = _asyncToGenerator(
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee3(dispatch) {
-        var response;
-        return regeneratorRuntime.wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                _context3.prev = 0;
-                _context3.next = 3;
-                return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/api/orderstoitems/');
-
-              case 3:
-                response = _context3.sent;
-                dispatch(fetchProductsAction(response.data));
-                _context3.next = 10;
-                break;
-
-              case 7:
-                _context3.prev = 7;
-                _context3.t0 = _context3["catch"](0);
-                console.error(_context3.t0);
-
-              case 10:
-              case "end":
-                return _context3.stop();
-            }
-          }
-        }, _callee3, null, [[0, 7]]);
-      }));
-
-      return function (_x3) {
-        return _ref3.apply(this, arguments);
-      };
-    }()
-  );
-};
-var fetchProduct = function fetchProduct(id) {
-  return (
-    /*#__PURE__*/
-    function () {
-      var _ref4 = _asyncToGenerator(
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee4(dispatch) {
-        var response;
-        return regeneratorRuntime.wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                _context4.prev = 0;
-                _context4.next = 3;
-                return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/products/".concat(id));
-
-              case 3:
-                response = _context4.sent;
-                dispatch(fetchProductAction(response.data));
-                _context4.next = 10;
-                break;
-
-              case 7:
-                _context4.prev = 7;
-                _context4.t0 = _context4["catch"](0);
-                console.error(_context4.t0);
-
-              case 10:
-              case "end":
-                return _context4.stop();
-            }
-          }
-        }, _callee4, null, [[0, 7]]);
-      }));
-
-      return function (_x4) {
-        return _ref4.apply(this, arguments);
       };
     }()
   );

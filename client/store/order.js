@@ -3,34 +3,31 @@ import axios from 'axios'
 /*
  * ACTION TYPES
  */
-const FETCH_PRODUCTS = 'FETCH_PRODUCTS'
-const FETCH_PRODUCT = 'FETCH_PRODUCT'
 const CREATE_CART = 'CREATE_CART'
 const ADD_TO_CART = 'ADD_TO_CART'
+const GET_CART = 'GET_CART'
 
 /**
  * INITIAL STATE
  */
-const initialState = {
-  productList: [],
-  cart: {}
-}
+const defaultOrder = {}
 
 /**
  * ACTION CREATORS
  */
-const fetchProductsAction = products => ({type: FETCH_PRODUCTS, products})
-const fetchProductAction = product => ({type: FETCH_PRODUCT, product})
-const createCartAction = product => ({type: CREATE_CART})
-const addToCartAction = product => ({type: ADD_TO_CART, product})
+
+const createCartAction = totalPrice => ({type: CREATE_CART, totalPrice})
+const addToCartAction = order => ({type: ADD_TO_CART, order})
+const getCartAction = orderProducts => ({type: GET_CART, orderProducts})
 
 /**
  * THUNK CREATORS
  */
-export const fetchProducts = () => async dispatch => {
+
+export const getCart = userId => async dispatch => {
   try {
-    const response = await axios.get('/api/products')
-    dispatch(fetchProductsAction(response.data))
+    const response = await axios.get(`/api/orders/${userId}/getCart`)
+    dispatch(getCartAction(response.data))
   } catch (err) {
     console.error(err)
   }
@@ -38,8 +35,8 @@ export const fetchProducts = () => async dispatch => {
 
 export const createCart = userId => async dispatch => {
   try {
-    const response = await axios.post('/api/orders/')
-    dispatch(createCartAction())
+    const response = await axios.post(`/api/orders/`, {userId})
+    dispatch(createCartAction(response.data))
   } catch (err) {
     console.error(err)
   }
@@ -48,16 +45,7 @@ export const createCart = userId => async dispatch => {
 export const addToCart = () => async dispatch => {
   try {
     const response = await axios.post('/api/orderstoitems/')
-    dispatch(fetchProductsAction(response.data))
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-export const fetchProduct = id => async dispatch => {
-  try {
-    const response = await axios.get(`/api/products/${id}`)
-    dispatch(fetchProductAction(response.data))
+    dispatch(addToCartAction(response.data))
   } catch (err) {
     console.error(err)
   }
@@ -66,13 +54,15 @@ export const fetchProduct = id => async dispatch => {
 /**
  * REDUCER
  */
-export default function(state = initialState, action) {
+export default function(state = defaultOrder, action) {
   Object.freeze(state)
   switch (action.type) {
-    case FETCH_PRODUCTS:
-      return {...state, productList: action.products}
-    case FETCH_PRODUCT:
-      return {...state, productList: action.product}
+    case CREATE_CART:
+      return {...state, ...action.totalPrice}
+    case ADD_TO_CART:
+      return {...state, ...action.product}
+    case GET_CART:
+      return {...state, ...action.orderProducts}
     default:
       return state
   }
