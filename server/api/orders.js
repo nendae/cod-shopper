@@ -19,13 +19,15 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:userId/getCart', async (req, res, next) => {
   try {
+    console.log('The req params is', req.params, 'the body is', req.body)
+
     const existingCart = await Order.findOne({
-      include: [{model: Product}],
       where: {
         userId: req.params.userId,
         orderSubmittedDate: null
       }
     })
+    console.log('the existing cart is: ', existingCart)
     if (existingCart) {
       res.json(existingCart)
     } else {
@@ -39,7 +41,7 @@ router.get('/:userId/getCart', async (req, res, next) => {
 //Create new order
 router.post('/', async (req, res, next) => {
   try {
-    const newOrder = await Order.create(req.body)
+    const newOrder = await Order.create({...req.body, totalPrice: 0})
     if (newOrder) {
       res.json({total: newOrder.totalPrice})
     } else {

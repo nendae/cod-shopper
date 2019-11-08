@@ -1,18 +1,28 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
+import {createCart, getCart} from '../store'
 
 /**
  * COMPONENT
  */
-export const UserHome = props => {
-  const {email} = props
+class UserHome extends React.Component {
+  async componentDidMount() {
+    console.log('props>>>>>', this.props)
+    await this.props.getCart(this.props.userId)
+    console.log('Submitted date >>>>', this.props.orderSubmittedDate)
+    if (this.props.orderSubmittedDate !== null) {
+      await this.props.createCart(this.props.userId)
+    }
+  }
 
-  return (
-    <div>
-      <h3>Welcome, {email}</h3>
-    </div>
-  )
+  render() {
+    return (
+      <div>
+        <h3>Welcome, {this.props.email}</h3>
+      </div>
+    )
+  }
 }
 
 /**
@@ -20,11 +30,18 @@ export const UserHome = props => {
  */
 const mapState = state => {
   return {
-    email: state.user.email
+    email: state.user.email,
+    userId: state.user.id,
+    orderSubmittedDate: state.order.orderSubmittedDate
   }
 }
 
-export default connect(mapState)(UserHome)
+const mapDispatch = dispatch => ({
+  getCart: id => dispatch(getCart(id)),
+  createCart: id => dispatch(createCart(id))
+})
+
+export default connect(mapState, mapDispatch)(UserHome)
 
 /**
  * PROP TYPES

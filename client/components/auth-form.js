@@ -1,7 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
-import {auth, createCart, getCart} from '../store'
+import {auth} from '../store'
 
 /**
  * COMPONENT
@@ -28,11 +28,6 @@ const AuthForm = props => {
     const email = evt.target.email.value
     const password = evt.target.password.value
     await props.auth(email, password, formName)
-    console.log('props>>>>>', props)
-    await props.getCart(props.userId)
-    if (props.totalPrice === undefined) {
-      await props.createCart(props.userId)
-    }
   }
   return (
     <div>
@@ -67,11 +62,12 @@ const AuthForm = props => {
  *   can stay DRY with interfaces that are very similar to each other!
  */
 const mapLogin = state => {
+  console.log('state in maplogin', state)
   return {
     name: 'login',
     displayName: 'Login',
     error: state.user.error,
-    userId: state.user.id,
+    state: state,
     totalPrice: state.order.totalPrice
   }
 }
@@ -80,16 +76,12 @@ const mapSignup = state => {
   return {
     name: 'signup',
     displayName: 'Sign Up',
-    error: state.user.error,
-    userId: state.user.id
+    error: state.user.error
   }
 }
 
 const mapDispatch = dispatch => ({
-  auth: (email, password, formName) =>
-    dispatch(auth(email, password, formName)),
-  getCart: id => dispatch(getCart(id)),
-  createCart: id => dispatch(createCart(id))
+  auth: (email, password, formName) => dispatch(auth(email, password, formName))
 })
 
 export const Login = connect(mapLogin, mapDispatch)(AuthForm)
