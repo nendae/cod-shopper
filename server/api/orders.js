@@ -22,7 +22,7 @@ router.post('/', async (req, res, next) => {
   try {
     const newOrder = await Order.create(req.body)
     if (newOrder) {
-      res.json(newOrder)
+      res.json({total: newOrder.totalPrice})
     } else {
       res.status(500).send('Order creation failed.')
     }

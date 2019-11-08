@@ -5,8 +5,6 @@ import axios from 'axios'
  */
 const FETCH_PRODUCTS = 'FETCH_PRODUCTS'
 const FETCH_PRODUCT = 'FETCH_PRODUCT'
-const CREATE_CART = 'CREATE_CART'
-const ADD_TO_CART = 'ADD_TO_CART'
 
 /**
  * INITIAL STATE
@@ -21,8 +19,6 @@ const initialState = {
  */
 const fetchProductsAction = products => ({type: FETCH_PRODUCTS, products})
 const fetchProductAction = product => ({type: FETCH_PRODUCT, product})
-const createCartAction = product => ({type: CREATE_CART})
-const addToCartAction = product => ({type: ADD_TO_CART, product})
 
 /**
  * THUNK CREATORS
@@ -30,24 +26,6 @@ const addToCartAction = product => ({type: ADD_TO_CART, product})
 export const fetchProducts = () => async dispatch => {
   try {
     const response = await axios.get('/api/products')
-    dispatch(fetchProductsAction(response.data))
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-export const createCart = userId => async dispatch => {
-  try {
-    const response = await axios.post('/api/orders/')
-    dispatch(createCartAction())
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-export const addToCart = () => async dispatch => {
-  try {
-    const response = await axios.post('/api/orderstoitems/')
     dispatch(fetchProductsAction(response.data))
   } catch (err) {
     console.error(err)

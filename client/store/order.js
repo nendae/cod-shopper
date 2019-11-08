@@ -3,43 +3,29 @@ import axios from 'axios'
 /*
  * ACTION TYPES
  */
-const FETCH_PRODUCTS = 'FETCH_PRODUCTS'
-const FETCH_PRODUCT = 'FETCH_PRODUCT'
 const CREATE_CART = 'CREATE_CART'
 const ADD_TO_CART = 'ADD_TO_CART'
 
 /**
  * INITIAL STATE
  */
-const initialState = {
-  productList: [],
-  cart: {}
-}
+const defaultOrder = {}
 
 /**
  * ACTION CREATORS
  */
-const fetchProductsAction = products => ({type: FETCH_PRODUCTS, products})
-const fetchProductAction = product => ({type: FETCH_PRODUCT, product})
-const createCartAction = product => ({type: CREATE_CART})
-const addToCartAction = product => ({type: ADD_TO_CART, product})
+
+const createCartAction = orderPrice => ({type: CREATE_CART, orderPrice})
+const addToCartAction = order => ({type: ADD_TO_CART, order})
 
 /**
  * THUNK CREATORS
  */
-export const fetchProducts = () => async dispatch => {
-  try {
-    const response = await axios.get('/api/products')
-    dispatch(fetchProductsAction(response.data))
-  } catch (err) {
-    console.error(err)
-  }
-}
 
 export const createCart = userId => async dispatch => {
   try {
-    const response = await axios.post('/api/orders/')
-    dispatch(createCartAction())
+    const {data} = await axios.post('/api/orders/', {userId})
+    dispatch(createCartAction(data))
   } catch (err) {
     console.error(err)
   }
@@ -48,16 +34,7 @@ export const createCart = userId => async dispatch => {
 export const addToCart = () => async dispatch => {
   try {
     const response = await axios.post('/api/orderstoitems/')
-    dispatch(fetchProductsAction(response.data))
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-export const fetchProduct = id => async dispatch => {
-  try {
-    const response = await axios.get(`/api/products/${id}`)
-    dispatch(fetchProductAction(response.data))
+    dispatch(addToCartAction(response.data))
   } catch (err) {
     console.error(err)
   }
@@ -66,13 +43,13 @@ export const fetchProduct = id => async dispatch => {
 /**
  * REDUCER
  */
-export default function(state = initialState, action) {
+export default function(state = defaultOrder, action) {
   Object.freeze(state)
   switch (action.type) {
-    case FETCH_PRODUCTS:
-      return {...state, productList: action.products}
-    case FETCH_PRODUCT:
-      return {...state, productList: action.product}
+    case CREATE_CART:
+      return {...state, ...action.orderPrice}
+    case ADD_TO_CART:
+      return {...state, ...action.product}
     default:
       return state
   }
